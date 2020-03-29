@@ -1,0 +1,144 @@
+/*
+Ram Patch Installer with NSIS
+
+To do:
+
+0. Create installer file with all appropriate files.
+1. Check if Windows XP 32-bit.
+2. If not Windows XP 32-bit, exit
+3. Create installer's name
+3A. Name is "x86 XP 128gb Patcher"
+3B. Version is "1.0"
+4. Backup files in installation directory
+4A. Get installation directory letter (in case not installed on C: drive)
+4B. Create directory "128gb Ram Patch by Diyba"
+4C. Create subdirectory inside directory: "backup"
+4D. Inside the backup will be even two more directories: "System32" and "Drivers"
+4E. Copy following files to system32 ("C:\Windows\System32" to "C:\Program Files\128gb Ram Patch
+by Diyba"
+
+To "C:\Program Files\128gb Ram Patch by Diyba\backup\system32"
+
+hal.dll
+halaacpi.dll
+halacpi.dll
+halapic.dll
+halmacpi.dll
+halmps.dll
+hidparse.sys
+ntkrnlpa.exe
+ntkrpamp.exe
+
+Copy following files to drivers (C:\Program Files\128gb Ram patch by Diyba\drivers)
+
+usb8023.sys
+usb8023x.sys
+usbccgp.sys
+usbd.sys
+usbehci.sys
+usbhub.sys
+usbintel.sys
+usbohci.sys
+usbport.sys
+usbscan.sys
+usbstor.sys
+usbuhci.sys
+usbvideo.sys
+
+5. Backup original boot.ini file
+5A. Create directory inside installation (C:\program files\128gb ram patch by diyba\backup boot)
+5B. Copy C:\boot.ini to backup boot directory
+
+6. Now install required files into Windows
+
+Copy files from folder "For system32" to "c:
+(C:\Windows\Drivers)
+
+(The required files should all be in a folder,
+inside their own specific folders)
+6. Copy existing files to c:windows\system32
+7. Copy existing files to c:windows\drivers
+8. Make copy of original boot.ini file
+9. Overwrite boot.ini files to add \PAE at
+end
+10. Create uninstaller.
+11. Have uninstaller restore backups.
+*/
+
+#Attempt to write code starts here.
+
+# Define; Compiler instructions
+!define VERSION "1.0"
+Name "x86 XP 128gb Patcher ${VERSION}"
+OutFile "My Program Installer - ${VERSION}.exe"
+
+# Create NSIS installer (this may need to go last)...refer back to chapter 3 later
+makensis [ option | script.nsi | - ] [...]
+
+# Installer Name
+Section "Create Installer"
+	SetOutPath $INSTDIR
+	File "x86XP_Ram_by_Diyba.exe"
+OutFile "x86XP_Ram_by_Diyba.exe"
+
+SectionEnd
+
+# Section Start (Installing files)
+Section
+	
+	# Ask user permission
+	# To be implemented; unsure how to make text appear on installer menu
+
+	# Check if Windows XP x86
+	$(GetWindowsVersion) $R0
+	
+	if{$R0} $R0 != '5.1'
+		MessageBox MB_OK "Sorry, the patch is for Windows XP only. \
+		Installation aborted."
+		Abort
+	${EndIf}
+ 
+	# Progress with installation if successful
+		# Establish default install directory
+		
+
+		# Write install/uninstall info to registry
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Product" \
+        	"x86 XP Ram Patch" "128gb Ram Enabler"
+	
+		WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\Product" \
+        	UninstallString" "$\"$INSTDIR\uninstall.exe$\""
+		
+		# Create uninstaller
+		WriteUninstaller "$INSTDIR\uninstall.exe"
+		CreateShortCut "$SMPROGRAMS\Your Program Folder\Uninstall Your Program.lnk" "$INSTDIR\uninstall.exe"
+
+		# Install to System32
+		# Define path, get original files
+		SetOutPath $WINDIR\System32
+		
+		# Make new folder to store them in
+
+		# Continue to transfer new files
+
+		SetOutPath $WINDIR\System32
+
+	# Default Section End
+	SectionEnd
+
+# Uninstaller section
+	Section "Uninstall"
+
+	# Deleting Uninstaller First
+	Delete "$INSTDIR\uninstall.exe"
+
+	# Undoing installed files
+	Delete "(get windows partition, delete installed files)"
+	
+	# Restore original files
+
+	# Delete all
+	RMDir "INSTDIR"
+	SetAutoClose false
+
+SectionEnd
